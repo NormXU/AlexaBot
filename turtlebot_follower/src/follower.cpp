@@ -34,6 +34,8 @@
 #include <sensor_msgs/Image.h>
 #include <visualization_msgs/Marker.h>
 #include <turtlebot_msgs/SetFollowState.h>
+#include <std_msgs/Bool.h>
+#include <iostream>
 
 #include "dynamic_reconfigure/server.h"
 #include "turtlebot_follower/FollowerConfig.h"
@@ -69,6 +71,8 @@ public:
   {
     delete config_srv_;
   }
+
+  bool start_flag = false;
 
 private:
   double min_y_; /**< The minimum y position of the points in the box. */
@@ -107,10 +111,12 @@ private:
     private_nh.getParam("x_scale", x_scale_);
     private_nh.getParam("enabled", enabled_);
 
+
     cmdpub_ = private_nh.advertise<geometry_msgs::Twist> ("cmd_vel", 1);
     markerpub_ = private_nh.advertise<visualization_msgs::Marker>("marker",1);
     bboxpub_ = private_nh.advertise<visualization_msgs::Marker>("bbox",1);
     sub_= nh.subscribe<sensor_msgs::Image>("depth/image_rect", 1, &TurtlebotFollower::imagecb, this);
+    enb_sub = nh.subscribe<std_msgs::Bool>("follwer_enable", 1, &TurtlebotFollower::followerCb,this);
 
     switch_srv_ = private_nh.advertiseService("change_state", &TurtlebotFollower::changeModeSrvCb, this);
 
@@ -131,6 +137,11 @@ private:
     z_scale_ = config.z_scale;
     x_scale_ = config.x_scale;
   }
+  void followerCb(const std_msgs::Bool::ConstPtr& Reached)
+ {
+    start_flag = Reached->data;
+    std::cout << start_flag << std::endl;
+   }
 
   /*!
    * @brief Callback for point clouds.
@@ -204,9 +215,11 @@ private:
 
       ROS_INFO_THROTTLE(1, "Centroid at %f %f %f with %d points", x, y, z, n);
       publishMarker(x, y, z);
+      //std::cout << start_flag << std::endl;
 
       if (enabled_)
       {
+        
         geometry_msgs::TwistPtr cmd(new geometry_msgs::Twist());
         cmd->linear.x = (z - goal_z_) * z_scale_;
         cmd->angular.z = -x * x_scale_;
@@ -309,6 +322,7 @@ private:
   }
 
   ros::Subscriber sub_;
+  ros::Subscriber enb_sub;
   ros::Publisher cmdpub_;
   ros::Publisher markerpub_;
   ros::Publisher bboxpub_;

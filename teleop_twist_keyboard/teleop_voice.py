@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from __future__ import print_function
+from turtlebot_msgs.srv import *
 
 import roslib; roslib.load_manifest('teleop_twist_keyboard')
 import rospy
@@ -78,7 +79,7 @@ Total_Times = 10;
 
 def fwdCb(msg):
 	if msg.data is True:
-		print('Go Forward')
+		rospy.loginfo('Go Forward')
 		count_times = 0;
 		while (count_times < Total_Times):
 			key = 'i'
@@ -92,11 +93,11 @@ def fwdCb(msg):
 			pub.publish(twistfwd)
 			time.sleep(0.2)
 			count_times+=1
-		print('Command Finish')
+		rospy.loginfo('Command Finish')
 
 def leftCb(msg):
 	if msg.data is True:
-		print('Turn left')
+		rospy.loginfo('Turn left')
 		count_times = 0;
 		while (count_times < Total_Times):
 			key = 'j'
@@ -110,11 +111,11 @@ def leftCb(msg):
 			pub.publish(twistleft)
 			time.sleep(0.2)
 			count_times+=1
-		print('Command Finish')
+		rospy.loginfo('Command Finish')
 
 def rightCb(msg):
 	if msg.data is True:
-		print('Turn Right')
+		rospy.loginfo('Turn Right')
 		count_times = 0;
 		while (count_times < Total_Times):
 			key = 'l'
@@ -128,11 +129,11 @@ def rightCb(msg):
 			pub.publish(twistright)
 			time.sleep(0.2)
 			count_times+=1
-		print('Command Finish')
+		rospy.loginfo('Command Finish')
 
 def StopCb(msg):
 	if msg.data is True:
-		print('Stop')
+		rospy.loginfo('Stop')
 
 		x = 0
 		y = 0
@@ -143,7 +144,9 @@ def StopCb(msg):
 		twist.angular.x = 0; twist.angular.y = 0; twist.angular.z = th*turn
 		pub.publish(twist)
 		time.sleep(0.1)
-		print('Command Finish')
+		rospy.loginfo('Command Finish')
+
+
 
 def getKey():
 	tty.setraw(sys.stdin.fileno())

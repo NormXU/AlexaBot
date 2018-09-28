@@ -10,7 +10,7 @@ catkin_package()
 catkin_install_python(PROGRAMS
    teleop_twist_keyboard.py
    teleop_voice.py
-   #test.py
+   stateChangeVoice.py
    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

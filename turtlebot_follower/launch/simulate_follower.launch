@@ -49,7 +49,7 @@
         args="load turtlebot_follower/TurtlebotFollower camera/camera_nodelet_manager">
     <remap from="turtlebot_follower/cmd_vel" to="follower_velocity_smoother/raw_cmd_vel"/>
     <remap from="depth/points" to="camera/depth/points"/>
-    <param name="enabled" value="true" />
+    <param name="enabled" value="false" />
     <param name="x_scale" value="7.0" />
     <param name="z_scale" value="2.0" />
     <param name="min_x" value="-0.35" />
