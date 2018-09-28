@@ -36,7 +36,7 @@ def follow_client(x):
 if __name__ == "__main__":
 
 	rospy.init_node('follow_listener', anonymous=True)
-	rospy.Subscriber("follow_cmd", Bool, followCb)
+	rospy.Subscriber("Alexa/follow_cmd", Bool, followCb)
 
 	
 	rospy.spin()

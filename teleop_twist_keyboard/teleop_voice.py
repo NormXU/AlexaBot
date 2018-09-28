@@ -165,10 +165,10 @@ if __name__=="__main__":
 	pub = rospy.Publisher('cmd_vel_mux/input/navi', Twist, queue_size = 10)
 	rospy.init_node('teleop_voice')
 
-	rospy.Subscriber("forward_cmd", Bool, fwdCb)
-	rospy.Subscriber("left_cmd", Bool, leftCb)
-	rospy.Subscriber("right_cmd", Bool, rightCb)
-	rospy.Subscriber("stop_cmd", Bool, StopCb)
+	rospy.Subscriber("Alexa/forward_cmd", Bool, fwdCb)
+	rospy.Subscriber("Alexa/left_cmd", Bool, leftCb)
+	rospy.Subscriber("Alexa/right_cmd", Bool, rightCb)
+	rospy.Subscriber("Alexa/stop_cmd", Bool, StopCb)
 
 
 	speed = rospy.get_param("~speed", 0.5)
