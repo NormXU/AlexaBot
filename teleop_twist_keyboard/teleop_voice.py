@@ -74,7 +74,7 @@ speedBindings={
 	      }
 
 
-Total_Times = 20;
+Total_Times = 10;
 
 def fwdCb(msg):
 	if msg.data is True:
@@ -159,7 +159,7 @@ def vels(speed,turn):
 if __name__=="__main__":
     	settings = termios.tcgetattr(sys.stdin)
 	
-	pub = rospy.Publisher('cmd_vel', Twist, queue_size = 10)
+	pub = rospy.Publisher('cmd_vel_mux/input/navi', Twist, queue_size = 10)
 	rospy.init_node('teleop_voice')
 
 	rospy.Subscriber("forward_cmd", Bool, fwdCb)
