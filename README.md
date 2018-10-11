@@ -1,16 +1,20 @@
 # AlexaBot
 
-roslaunch turtlebot_bringup minimal.launch
-roslaunch freenect_launch freenect.launch
+--------------------------
+To initialize turtlebot: `roslaunch turtlebot_bringup minimal.launch`
 
 
-roslaunch teleop_twist_keyboard voice_turtlebot.launch
+To start kinect on turtlebot: `roslaunch freenect_launch freenect.launch`
 
 
-roslaunch usb_cam usb_cam-test.launch
+To start alexa-control node: `roslaunch teleop_twist_keyboard voice_turtlebot.launch`
+
+
+To launch the usb-camera on host: `roslaunch usb_cam usb_cam-test.launch`
 
 
 
+--------------------------
 Face detection : branch Jinxin_CV_facedetection 
 
 
