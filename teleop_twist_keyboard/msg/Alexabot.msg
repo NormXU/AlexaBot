@@ -1,8 +1,5 @@
-string fwd
-bool data1
-string follow
-bool data2
-string right
-bool data3
-string left
-bool data4
+bool turtlebot_enable
+bool fwd_enable
+bool follow_enable
+bool right_enable
+bool left_enable

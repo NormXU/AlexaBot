@@ -26,7 +26,7 @@ CATKIN_DEPENDS message_runtime
 ## Mark executable scripts (Python etc.) for installation
 ## in contrast to setup.py, you can choose the destination
 catkin_install_python(PROGRAMS
-   teleop_twist_keyboard.py
+   teleop_twist_keyboard_cmd.py
    teleop_voice.py
    stateChangeVoice.py
    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

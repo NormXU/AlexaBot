@@ -11,7 +11,7 @@ if __name__ == '__main__':
     with open( sys.argv[1], 'r') as myfile:
         json_str=myfile.read()
     message = json_message_converter.convert_json_to_ros_message('teleop_twist_keyboard/Alexabot', json_str)
-    pub = rospy.Publisher('my_topic', Alexabot, queue_size=10)
+    pub = rospy.Publisher('AWS/cmd', Alexabot, queue_size=10)
     rospy.init_node('path_publisher', anonymous=True)
     rate = rospy.Rate(10)
 

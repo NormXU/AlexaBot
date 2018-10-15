@@ -13,6 +13,17 @@ To start alexa-control node: `roslaunch teleop_twist_keyboard voice_turtlebot.la
 To launch the usb-camera on host: `roslaunch usb_cam usb_cam-test.launch`
 
 
+To launch the hand_gesture detection: `roslaunch rbx_norm hand_detect.launch`
+
+
+To launch json2rosmessage: `./transform_json.py xxx.json`
+
+
+To launch turtlebot follwer `roslaunch turtlebot_follower follower.launch`
+
+To check the turtlbot follwer simulation 'roslaunch turtlebot_follower simulate_follower.launch'
+
+
 
 --------------------------
 Face detection : branch Jinxin_CV_facedetection 

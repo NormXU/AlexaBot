@@ -1,6 +1,7 @@
 {
-    "data1": true,
-    "data2": true,
-    "data2": false,
-    "data4": true
+    "turtlebot_enable": true,
+    "fwd_enable": true,
+    "follow_enable": false,
+    "right_enable": true,
+    "left_enable": true
 }
