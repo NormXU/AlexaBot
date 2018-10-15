@@ -21,7 +21,7 @@ To launch json2rosmessage: `./transform_json.py xxx.json`
 
 To launch turtlebot follwer `roslaunch turtlebot_follower follower.launch`
 
-To check the turtlbot follwer simulation 'roslaunch turtlebot_follower simulate_follower.launch'
+To check the turtlbot follwer simulation `roslaunch turtlebot_follower simulate_follower.launch`
 
 
 
