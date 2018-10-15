@@ -75,7 +75,7 @@ speedBindings={
 	      }
 
 
-Total_Times = 10;
+Total_Times = 5;
 
 def fwdCb(msg):
 	if msg.data is True:
