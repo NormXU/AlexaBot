@@ -77,7 +77,7 @@ class GoodFeatures(ROS2OpenCV2):
 
             for i in range(1, num+1):
                 pts =  np.where(markers == i)
-                if len(pts[0]) < 100:
+                if len(pts[0]) < 200:
                     markers[pts] = 0
 
             label_hue = np.uint8(markers.copy())
