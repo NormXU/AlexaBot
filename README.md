@@ -34,3 +34,7 @@ for iris detection just run 'eyeball and iris tracking ' part, you dont need to 
 
 
 Pay attention!!!! All the opencv code is run in OPENCV 3.0
+
+
+# To do List
+1. voice_control.py should publish once, when it receives a series of data; hand_detect_CNN.py and voice_control.py Improved!
