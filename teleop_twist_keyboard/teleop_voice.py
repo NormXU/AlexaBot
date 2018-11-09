@@ -75,7 +75,7 @@ speedBindings={
 	      }
 
 
-Total_Times = 5;
+Total_Times = 4;
 
 def fwdCb(msg):
 	if msg.data is True:
@@ -162,7 +162,7 @@ def vels(speed,turn):
 if __name__=="__main__":
     	settings = termios.tcgetattr(sys.stdin)
 	
-	pub = rospy.Publisher('cmd_vel_mux/input/navi', Twist, queue_size = 10)
+	pub = rospy.Publisher('cmd_vel_mux/input/navi', Twist, queue_size = 1)
 	rospy.init_node('teleop_voice')
 
 	rospy.Subscriber("Alexa/forward_cmd", Bool, fwdCb)
