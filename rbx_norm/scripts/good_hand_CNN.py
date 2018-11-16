@@ -49,6 +49,7 @@ class GoodFeatures(ROS2OpenCV2):
         # Initialize key variables
         self.keypoints = list()
         self.detect_box = None
+        
         self.mask = None
         self.hand_flag = None
         self.boolFwdFlag = Bool()
@@ -77,7 +78,7 @@ class GoodFeatures(ROS2OpenCV2):
             #crop_image = cv_image
             height, width, channels = crop_image.shape
 
-            blur = cv2.blur(crop_image,(7,7), 0)
+            blur = cv2.blur(crop_image,(3,3), 0)
             hsv = cv2.cvtColor(blur, cv2.COLOR_BGR2HSV)
             lower_range = np.array([2,0,0])
             #upper_range = np.array([10,255,255])
@@ -87,7 +88,7 @@ class GoodFeatures(ROS2OpenCV2):
             skinkernel = np.ones((5,5))
 
             dilation = cv2.dilate(mask, skinkernel, iterations = 2)
-            erosion = cv2.erode(dilation, skinkernel, iterations = 1)
+            erosion = cv2.erode(dilation, skinkernel, iterations = 2)
 
             filtered = cv2.GaussianBlur(dilation, (15,15), 1)
             ret,thresh = cv2.threshold(filtered, 127, 255, 0)
@@ -190,7 +191,7 @@ class GoodFeatures(ROS2OpenCV2):
                     #print corresponding gestures which are in their ranges
                     #print(l)
                     font = cv2.FONT_HERSHEY_SIMPLEX
-                    if l == 4 and predicted == 1: 
+                    if l == 4 and predicted == 1:
                         cv2.putText(cv_image,"Go Forward", (50,50), cv2.FONT_HERSHEY_SIMPLEX, 2, 2)
                         
                         self.boolFwdFlag.data = 1
@@ -246,13 +247,13 @@ if __name__ == '__main__':
             if goodfeatures.display_image is not None:
                 goodfeatures.image_show(goodfeatures.cv_window_name, goodfeatures.display_image)
 
-            hand_pub_fwd = rospy.Publisher("/Alexa/fwd_cmd", Bool, queue_size=1)
+            hand_pub_fwd = rospy.Publisher("/Alexa/fwd_cmd_realtime", Bool, queue_size=1)
             hand_pub_fwd.publish(goodfeatures.boolFwdFlag)
 
-            hand_pub_right = rospy.Publisher("/Alexa/right_cmd", Bool, queue_size=1)
+            hand_pub_right = rospy.Publisher("/Alexa/right_cmd_realtime", Bool, queue_size=1)
             hand_pub_right.publish(goodfeatures.boolRightFlag)
 
-            hand_pub_left = rospy.Publisher("/Alexa/left_cmd", Bool, queue_size=1)
+            hand_pub_left = rospy.Publisher("/Alexa/left_cmd_realtime", Bool, queue_size=1)
             hand_pub_left.publish(goodfeatures.boolLeftFlag)
                 
     except KeyboardInterrupt:
