@@ -12,6 +12,7 @@ To start alexa-control node: `roslaunch teleop_twist_keyboard voice_turtlebot.la
 
 To launch the usb-camera on host: `roslaunch usb_cam usb_cam-test.launch`
 
+To launch the trigger for Alexa command topic: `roslaunch rbx_norm hand_detection.launch`
 
 To launch the hand_gesture detection: `./good_hand_CNN.py`
 
@@ -29,6 +30,20 @@ To check the turtlbot follwer simulation `roslaunch turtlebot_follower simulate_
 
 To enable following function, `rostopic pub -1 /Alexa/follow_cmd 1`
 
+--------------------------
+# Launch Steps
+
+`roslaunch turtlebot_bringup minimal.launch`
+
+`roslaunch freenect_launch freenect.launch`
+
+`roslaunch turtlebot_follower follower.launch`
+
+`roslaunch teleop_twist_keyboard voice_turtlebot.launch`
+
+`roslaunch rbx_norm hand_detection.launch`
+
+`./good_hand_CNN.py`
 
 --------------------------
 Face detection : branch Jinxin_CV_facedetection 
