@@ -7,4 +7,6 @@
     <node pkg="teleop_twist_keyboard" name="stateChangeVoice" type="stateChangeVoice.py" output="screen">
     </node>
 
+    <node pkg="teleop_twist_keyboard" name="json2ros" type="jsonpub.py" output="screen">
+    </node>
 </launch>
