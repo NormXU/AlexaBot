@@ -78,7 +78,7 @@ class GoodFeatures(ROS2OpenCV2):
             #crop_image = cv_image
             height, width, channels = crop_image.shape
 
-            blur = cv2.blur(crop_image,(3,3), 0)
+            blur = cv2.blur(crop_image,(5,5), 0)
             hsv = cv2.cvtColor(blur, cv2.COLOR_BGR2HSV)
             lower_range = np.array([2,0,0])
             #upper_range = np.array([10,255,255])
@@ -212,31 +212,10 @@ class GoodFeatures(ROS2OpenCV2):
                                 
         return cv_image
 
-    def get_keypoints(self, input_image, detect_box):
-        # Initialize the mask with all black pixels
-        self.mask = np.zeros_like(input_image)
- 
-        # Get the coordinates and dimensions of the detect_box
-        try:
-            x, y, w, h = detect_box
-        except: 
-            return None
-        
-        # Set the selected rectangle within the mask to white
-        self.mask[y:y+h, x:x+w] = 255
-
-        # Compute the good feature keypoints within the selected region
-        keypoints = list()
-        kp = cv2.goodFeaturesToTrack(input_image, mask = self.mask, **self.gf_params)
-        if kp is not None and len(kp) > 0:
-            for x, y in np.float32(kp).reshape(-1, 2):
-                keypoints.append((x, y))
-                
-        return keypoints
 
 if __name__ == '__main__':
     try:
-        node_name = "good_features"
+        node_name = "hand_gesture"
         goodfeatures= GoodFeatures(node_name)
         #hand_flag = None
         #pub = rospy.Publisher('hand_detect_forward', Bool, queue_size=10)
