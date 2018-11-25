@@ -40,7 +40,10 @@ class GoodFeatures(ROS2OpenCV2):
         self.detect_box = None
         self.mask = None
         self.boolFlag = Bool()
-        self.detector = dlib.simple_object_detector("Pedestriandetector.svm")
+        self.detector1 = dlib.fhog_object_detector("Pedestriandetector.svm")
+        self.detector2 = dlib.fhog_object_detector("Pedestriandetector2.svm")
+        self.detector3 = dlib.fhog_object_detector("Pedestriandetector.svm")
+        self.detectors = [self.detector1, self.detector2, self.detector3]
         
  # Cover the function which has the same name as processing and redefine the details       
     def processing(self, cv_image):
@@ -51,12 +54,19 @@ class GoodFeatures(ROS2OpenCV2):
                 return cv_image
 
             #detector = dlib.simple_object_detector("Pedestriandetector.svm")
-            cv_image = cv2.cvtColor(cv_image, cv2.COLOR_BGR2RGB)
+            self.boolFlag.data = 0
 
-            dets = self.detector(cv_image)
-            for d in dets:
-            	cv2.rectangle(cv_image, (d.left(), d.top()), (d.right(), d.bottom()), (0, 0, 255), 2)
-            	self.boolFlag.data = 1
+            scale_percent = 70 # percent of original size
+            width = int(cv_image.shape[1] * scale_percent / 100)
+            height = int(cv_image.shape[0] * scale_percent / 100)
+            dim = (width, height)
+            cv_image = cv2.resize(cv_image,dim,interpolation = cv2.INTER_AREA)
+    		#cv_image = cv2.resize(cv_image, dim, interpolation = cv2.INTER_AREA)
+            cv_image = cv2.cvtColor(cv_image, cv2.COLOR_BGR2RGB)
+            [boxes, confidences, detector_idxs] = dlib.fhog_object_detector.run_multiple(self.detectors, cv_image, upsample_num_times=1, adjust_threshold=0.0)
+            for d in boxes:
+    			cv2.rectangle(cv_image, (d.left(), d.top()), (d.right(), d.bottom()), (0, 255, 0), 2)
+    			self.boolFlag.data = 1
 
             cv_image = cv2.cvtColor(cv_image, cv2.COLOR_RGB2BGR)
 
@@ -79,15 +89,10 @@ if __name__ == '__main__':
             if goodfeatures.display_image is not None:
                 goodfeatures.image_show(goodfeatures.cv_window_name, goodfeatures.display_image)
 
-            #pub.publish(self.hand_flag)
-            #f = Bool()
-            #f.data = hand_flag
-            #print(hand_flag)
+
             hand_pub_fwd = rospy.Publisher("/Alexa/find_people", Bool, queue_size=1)
             hand_pub_fwd.publish(goodfeatures.boolFlag)
 
-            #hand_pub_turn = rospy.Publisher("/Alexa/right_cmd", Bool, queue_size=1)
-            #hand_pub_fwd.publish(goodfeatures.boolTurnFlag)
                 
     except KeyboardInterrupt:
         print "Shutting down the Good Features node."
