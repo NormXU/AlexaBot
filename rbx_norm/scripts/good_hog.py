@@ -40,10 +40,10 @@ class GoodFeatures(ROS2OpenCV2):
         self.detect_box = None
         self.mask = None
         self.boolFlag = Bool()
-        self.detector1 = dlib.fhog_object_detector("Pedestriandetector.svm")
-        self.detector2 = dlib.fhog_object_detector("Pedestriandetector2.svm")
-        self.detector3 = dlib.fhog_object_detector("Pedestriandetector.svm")
-        self.detectors = [self.detector1, self.detector2, self.detector3]
+        #self.detector1 = dlib.fhog_object_detector("Pedestriandetector.svm")
+        #self.detector2 = dlib.fhog_object_detector("Pedestriandetector2.svm")
+        self.detector3 = dlib.fhog_object_detector("Pedestriandetector4.svm")
+        self.detectors = [self.detector3]
         
  # Cover the function which has the same name as processing and redefine the details       
     def processing(self, cv_image):
