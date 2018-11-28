@@ -56,13 +56,26 @@ class GoodFeatures(ROS2OpenCV2):
         self.boolRightFlag = Bool()
         self.boolLeftFlag = Bool()
         self.boolTurnFlag = Bool()
-        self.model = load_model('model.h5')
+        self.count = 0
+        self.eyecount = 0
+
+        self.model_left_eye = load_model('left_eye_model.h5')
         print('test model...')
         #print self.model.predict(np.zeros((1, len(word_index)+1)))
         #https://www.jianshu.com/p/c84ae0527a3f
-        print(self.model.predict(np.zeros((1,3,50,65))))
+        print(self.model_left_eye.predict(np.zeros((1,3,50,25))))
         print('test Done !')
 
+
+        self.model_right_eye = load_model('right_eye_model.h5')
+        print('test model...')
+        #print self.model.predict(np.zeros((1, len(word_index)+1)))
+        #https://www.jianshu.com/p/c84ae0527a3f
+        print(self.model_right_eye.predict(np.zeros((1,3,50,25))))
+        print('test Done !')
+
+        self.face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+        self.eye_cascade = cv2.CascadeClassifier('haarcascade_eye.xml')
         
  # Cover the function which has the same name as processing and redefine the details       
     def processing(self, cv_image):
@@ -71,139 +84,103 @@ class GoodFeatures(ROS2OpenCV2):
             cv_image = cv2.flip(cv_image, 1)
             if not self.detect_box:
                 return cv_image
+
+            self.boolFwdFlag.data = 0
+            self.boolTurnFlag.data = 0
+            self.boolRightFlag.data = 0
+            self.boolLeftFlag.data = 0
+
+
+            gray = cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY)
+            faces = self.face_cascade.detectMultiScale(gray, 1.3, 5)
+
+            for (x,y,w,h) in faces:
+		        cv2.rectangle(cv_image,(x,y),(x+w,y+h),(255,0,0),2)
+		        roi_gray = gray[y:y+h, x:x+w]
+		        roi_color = cv_image[y:y+h, x:x+w]
+		        eyes = self.eye_cascade.detectMultiScale(roi_gray,1.1,10)
+		        if eyes is None:
+		            pass
+		        num_eyes = np.size(eyes)
+		        self.eyecount = self.eyecount+1
+		        num_eyes = num_eyes/4
+		        if num_eyes == 1:
+		            cv2.putText(cv_image,"stop!", (50,50), cv2.FONT_HERSHEY_SIMPLEX, 2, 2)
+		            self.boolFwdFlag.data = 1
+		            
+		        if num_eyes == 2:
+		            # we have to find two eyes 
+		            self.count = 0
+		            if eyes[0,0]<eyes[1,0]:
+		                check = 1
+		            else:
+		                check = 2
+		            for (ex,ey,ew,eh) in eyes:
+		                self.count = self.count+1
+		                if self.count == check:
+		                    # left eyes
+		                    cv2.rectangle(roi_color,(ex,ey),(ex+ew,ey+eh),(0,255,0),2)
+		                    eye_img = roi_gray[ey:ey+eh,ex:ex+ew]
+		                    #eye_color = roi_color[ey:ey+eh,ex:ex+ew]
+		                    eye_image = eye_img
+		                    #cv2.imshow('left eye',eye_image)
+		                    resized_eyes = cv2.resize(eye_image, (50, 50))
+		                    cut_image = resized_eyes[10:35,:]
+		                    cut_image_expend = np.zeros((25,50,3))
+		                    cut_image_expend[:,:,0] = cut_image
+		                    cut_image_expend[:,:,1] = cut_image
+		                    cut_image_expend[:,:,2] = cut_image
+		                    img = np.reshape(cut_image_expend,(1,3,50,25))
+		                    pred  = self.model_left_eye.predict(img)
+		                    predicted = np.argmax(pred,axis=1)
+		                    left_eye_result = predicted
+		                else:
+		                    # right eyes
+		                    cv2.rectangle(roi_color,(ex,ey),(ex+ew,ey+eh),(0,255,0),2)
+		                    eye_img = roi_gray[ey:ey+eh,ex:ex+ew]
+		                    #eye_color = roi_color[ey:ey+eh,ex:ex+ew]
+		                    eye_image = eye_img
+		                    #cv2.imshow('right eye',eye_image)
+		                    resized_eyes = cv2.resize(eye_image, (50, 50))
+		                    cut_image = resized_eyes[10:35,:]
+		                    cut_image_expend = np.zeros((25,50,3))
+		                    cut_image_expend[:,:,0] = cut_image
+		                    cut_image_expend[:,:,1] = cut_image
+		                    cut_image_expend[:,:,2] = cut_image
+		                    img = np.reshape(cut_image_expend,(1,3,50,25))
+		                    pred  = self.model_right_eye.predict(img)
+		                    predicted = np.argmax(pred,axis=1)
+		                    right_eye_result = predicted
+                    
+            			#print (left_eye_result,right_eye_result)
+		            if left_eye_result != right_eye_result:
+		                    print ('move forward!')
+		                    cv2.putText(cv_image,"move forward!", (50,50), cv2.FONT_HERSHEY_SIMPLEX, 2, 2)
+		                    
+		            if left_eye_result == right_eye_result:
+		                if left_eye_result == 0:
+		                    print ('move forward!')
+		                    cv2.putText(cv_image,"move forward!", (50,50), cv2.FONT_HERSHEY_SIMPLEX, 2, 2)
+		                    #self.boolFwdFlag.data = 1
+		                elif left_eye_result == 1:
+		                    print ('move forward!')
+		                    cv2.putText(cv_image,"move forward!", (50,50), cv2.FONT_HERSHEY_SIMPLEX, 2, 2)
+		                    #self.boolFwdFlag.data = 1
+		                elif left_eye_result == 2:
+		                    print ('move left!')
+		                    cv2.putText(cv_image,"move left!", (50,50), cv2.FONT_HERSHEY_SIMPLEX, 2, 2)
+		                    self.boolLeftFlag.data = 1
+		                elif left_eye_result == 3:
+		                    print ('move right!')
+		                    cv2.putText(cv_image,"move right!", (50,50), cv2.FONT_HERSHEY_SIMPLEX, 2, 2)
+		                    self.boolRightFlag.data = 1
     
 
-            cv2.rectangle(cv_image,(170,170),(400,400),(0,255,0),0)
-            crop_image = cv_image[170:400, 170:400]
-            #crop_image = cv_image
-            height, width, channels = crop_image.shape
-
-            blur = cv2.blur(crop_image,(5,5), 0)
-            hsv = cv2.cvtColor(blur, cv2.COLOR_BGR2HSV)
-            lower_range = np.array([2,0,0])
-            #upper_range = np.array([10,255,255])
-            upper_range = np.array([16,255,255])
-
-            mask = cv2.inRange(hsv,lower_range,upper_range)
-            skinkernel = np.ones((5,5))
-
-            dilation = cv2.dilate(mask, skinkernel, iterations = 2)
-            erosion = cv2.erode(dilation, skinkernel, iterations = 2)
-
-            filtered = cv2.GaussianBlur(dilation, (15,15), 1)
-            ret,thresh = cv2.threshold(filtered, 127, 255, 0)
-
-            Label_ret, markers = cv2.connectedComponents(thresh)
-            num = markers.max()
-            #print(num)
-
-            for i in range(1, num+1):
-                pts =  np.where(markers == i)
-                if len(pts[0]) < 200:
-                    markers[pts] = 0
-
-            label_hue = np.uint8(markers.copy())
-            label_hue = np.where(label_hue != 0, 255, label_hue)
-
-            resColored = cv2.bitwise_and(crop_image,crop_image,mask = label_hue)
-            res = cv2.cvtColor(resColored, cv2.COLOR_BGR2GRAY)
-
-
-            # CNN Predict
-            img = cv2.resize(resColored,(50,65),interpolation = cv2.INTER_CUBIC)
-            img = np.reshape(img,(1,3,50,65))
-            pred  = self.model.predict(img)
-            predicted = np.argmax(pred,axis=1)
-            #print(predicted)
 
 
 
 
-            #find contours
-            _,contours,hierarchy= cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
-
-            #find contour of max area(hand)
-            if (len(contours) > 0):
-                cnt = max(contours, key = lambda x: cv2.contourArea(x))
-
-                #approx the contour a little
-                epsilon = 0.0005*cv2.arcLength(cnt,True)
-                approx= cv2.approxPolyDP(cnt,epsilon,True)
-
-                #make convex hull around hand
-                hull = cv2.convexHull(cnt)
-
-                #define area of hull and area of hand
-                areahull = cv2.contourArea(hull)
-                areacnt = cv2.contourArea(cnt)
-
-
-                #find the percentage of area not covered by hand in convex hull
-                arearatio=((areahull-areacnt)/areacnt)*100
-
-                #find the defects in convex hull with respect to hand
-                hull = cv2.convexHull(approx, returnPoints=False)
-                defects = cv2.convexityDefects(approx, hull)
-
-                # l = no. of defects
-                l=0
-
-                self.boolFwdFlag.data = 0
-                self.boolTurnFlag.data = 0
-                self.boolRightFlag.data    = 0
-                self.boolLeftFlag.data = 0
-
-
-                #code for finding no. of defects due to fingers
-                for i in range(defects.shape[0]):
-                    s,e,f,d = defects[i,0]
-                    start = tuple(approx[s][0])
-                    end = tuple(approx[e][0])
-                    far = tuple(approx[f][0])
-                    pt= (100,180)
-
-                    # find length of all sides of triangle
-                    a = math.sqrt((end[0] - start[0])**2 + (end[1] - start[1])**2)
-                    b = math.sqrt((far[0] - start[0])**2 + (far[1] - start[1])**2)
-                    c = math.sqrt((end[0] - far[0])**2 + (end[1] - far[1])**2)
-                    s = (a+b+c)/2
-                    ar = math.sqrt(s*(s-a)*(s-b)*(s-c))
-
-                    #distance between point and convex hull
-                    d=(2*ar)/a
-                    #print(a)
-
-
-                    # apply cosine rule here
-
-                    angle = math.acos((b**2 + c**2 - a**2)/(2*b*c)) * 57
-
-                    # ignore angles > 90 and ignore points very close to convex hull(they generally come due to noise)
-                    if angle <= 90:
-                        l += 1
-                    #cv2.circle(crop_image, far, 3, [255,0,0], -1)
-                    #draw lines around hand
-                    cv2.line(crop_image,start, end, [0,255,0], 2)
-            
-            
-                    #l+=1
-        
-                    #print corresponding gestures which are in their ranges
-                    #print(l)
-                    font = cv2.FONT_HERSHEY_SIMPLEX
-                    if l == 4 and predicted == 1:
-                        cv2.putText(cv_image,"Go Forward", (50,50), cv2.FONT_HERSHEY_SIMPLEX, 2, 2)
-                        
-                        self.boolFwdFlag.data = 1
-
-                    if l!=5 and predicted == 3 and l!=0:
-                    	cv2.putText(cv_image,"Turn Left", (50,50), cv2.FONT_HERSHEY_SIMPLEX, 2, 2)
-                    	
-                    	self.boolLeftFlag.data = 1
-
-                    if l!=5 and predicted == 2 and l!=0:
-                    	cv2.putText(cv_image,"Turn Right", (50,50), cv2.FONT_HERSHEY_SIMPLEX, 2, 2)
-                    	self.boolRightFlag.data = 1
+               
 
             
         except Exception as e:
@@ -215,7 +192,7 @@ class GoodFeatures(ROS2OpenCV2):
 
 if __name__ == '__main__':
     try:
-        node_name = "hand_gesture"
+        node_name = "eye_tracking"
         goodfeatures= GoodFeatures(node_name)
         #hand_flag = None
         #pub = rospy.Publisher('hand_detect_forward', Bool, queue_size=10)
