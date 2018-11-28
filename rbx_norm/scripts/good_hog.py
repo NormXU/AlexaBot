@@ -7,6 +7,7 @@ import cv2 as cv
 from rbx1_vision.ros2opencv2 import ROS2OpenCV2
 import numpy as np
 import math
+import pygame
 from std_msgs.msg import Bool
 
 class GoodFeatures(ROS2OpenCV2):
@@ -42,8 +43,10 @@ class GoodFeatures(ROS2OpenCV2):
         self.boolFlag = Bool()
         #self.detector1 = dlib.fhog_object_detector("Pedestriandetector.svm")
         #self.detector2 = dlib.fhog_object_detector("Pedestriandetector2.svm")
-        self.detector3 = dlib.fhog_object_detector("Pedestriandetector4.svm")
+        self.detector3 = dlib.fhog_object_detector("Pedestriandetector33.svm")
         self.detectors = [self.detector3]
+        pygame.init()
+        self.s = pygame.mixer.Sound('Dong.WAV')
         
  # Cover the function which has the same name as processing and redefine the details       
     def processing(self, cv_image):
@@ -67,6 +70,7 @@ class GoodFeatures(ROS2OpenCV2):
             for d in boxes:
     			cv2.rectangle(cv_image, (d.left(), d.top()), (d.right(), d.bottom()), (0, 255, 0), 2)
     			self.boolFlag.data = 1
+    			self.s.play()
 
             cv_image = cv2.cvtColor(cv_image, cv2.COLOR_RGB2BGR)
 
