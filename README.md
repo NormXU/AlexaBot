@@ -1,7 +1,7 @@
 # AlexaBot
 --------------------------
 ## Demo Video
-[Video](https://www.youtube.com/watch?v=TXflYI3eTqI&t=30s)
+[## Video](https://www.youtube.com/watch?v=TXflYI3eTqI&t=30s)
 --------------------------
 To initialize turtlebot: `roslaunch turtlebot_bringup minimal.launch`
 
