@@ -57,4 +57,9 @@ Pay attention!!!! All the opencv code is run in OPENCV 3.0
 
 
 # To do List
-1. voice_control.py should publish once, when it receives a series of data; hand_detect_CNN.py and voice_control.py Improved!
+1. ~~voice_control.py should publish once, when it receives a series of data; hand_detect_CNN.py and voice_control.py Improved!~~
+
+--------------------------
+# Demo Video
+[Video](https://www.youtube.com/watch?v=TXflYI3eTqI&t=30s)
+
