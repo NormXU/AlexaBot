@@ -1,7 +1,9 @@
 # AlexaBot
---------------------------
+
 [Demo Video](https://www.youtube.com/watch?v=TXflYI3eTqI&t=30s)
 --------------------------
+
+# Instructions
 To initialize turtlebot: `roslaunch turtlebot_bringup minimal.launch`
 
 
@@ -45,6 +47,8 @@ To enable following function, `rostopic pub -1 /Alexa/follow_cmd 1`
 `roslaunch rbx_norm hand_detection.launch`
 
 `./good_hand_CNN.py`
+
+`./good_hog.py`
 
 --------------------------
 Face detection : branch Jinxin_CV_facedetection 
